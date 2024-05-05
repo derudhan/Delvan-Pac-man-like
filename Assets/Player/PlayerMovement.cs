@@ -1,22 +1,40 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    // Start is called before the first frame update
-    // void Start()
-    // {
-        
-    // }
+    public Action OnPowerUpStart;
+    public Action OnPowerUpStop;
 
-    // Update is called once per frame
     [SerializeField]
     private float _speed;
     [SerializeField]
     private Camera _camera;
+    [SerializeField]
+    private float _powerUpDuration;
 
     private Rigidbody _rigidbody;
+    private Coroutine _powerUpCoroutine;
+
+    public void PickPowerUp() {
+        if (_powerUpCoroutine != null) {
+            StopCoroutine(_powerUpCoroutine);
+        }
+        
+        _powerUpCoroutine = StartCoroutine(StartPowerUp());
+    }
+
+    private IEnumerator StartPowerUp() {
+        if (OnPowerUpStart != null) {
+            OnPowerUpStart();
+        }
+        yield return new WaitForSeconds(_powerUpDuration);
+        if (OnPowerUpStop != null) {
+            OnPowerUpStop();
+        }
+    }
 
     private void Awake() {
         _rigidbody = GetComponent<Rigidbody>();
