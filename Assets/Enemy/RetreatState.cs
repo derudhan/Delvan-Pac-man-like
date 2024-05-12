@@ -5,7 +5,7 @@ using UnityEngine;
 public class RetreatState : BaseState
 {
     public void EnterState(Enemy enemy) {
-        enemy.GetComponent<Renderer>().material = enemy.RetreatMaterial;
+        enemy.animator.SetTrigger("RetreatState");
     }
     
     public void UpdateState(Enemy enemy) {
@@ -15,6 +15,5 @@ public class RetreatState : BaseState
     }
     
     public void ExitState(Enemy enemy) {
-        enemy.GetComponent<Renderer>().material = enemy.BaseMaterial;
     }
 }

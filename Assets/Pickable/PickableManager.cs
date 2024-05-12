@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PickableManager : MonoBehaviour
 {
     [SerializeField]
     private PlayerMovement player;
+    [SerializeField]
+    private ScoreManager _scoreManager;
 
     private List<PickableObject> _pickablesList = new List<PickableObject>();
 
@@ -21,13 +24,16 @@ public class PickableManager : MonoBehaviour
             _pickablesList.Add(pickableObjects[i]);
             pickableObjects[i].OnPicked += OnPickablePicked;
         }
+        _scoreManager.SetMaxScore(_pickablesList.Count);
 
-        // Debug.Log("Jumlah Pickable: " + _pickablesList.Count);
     }
 
     private void OnPickablePicked(PickableObject pickable) {
         _pickablesList.Remove(pickable);
-        // Debug.Log("Sisa " + _pickablesList.Count);
+
+        if (_scoreManager != null) {
+            _scoreManager.AddScore(1);
+        }
 
         if (pickable.PickableType == PickableType.PowerUp) {
             player.PickPowerUp();

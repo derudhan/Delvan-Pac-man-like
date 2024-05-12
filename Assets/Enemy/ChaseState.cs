@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class ChaseState : BaseState
 {
-    public void EnterState(Enemy enemy) {}
+    public void EnterState(Enemy enemy) {
+        enemy.animator.SetTrigger("ChaseState");
+    }
     
     public void UpdateState(Enemy enemy) {
         if (enemy.player != null) {}

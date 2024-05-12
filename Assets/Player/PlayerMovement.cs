@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -14,9 +15,27 @@ public class PlayerMovement : MonoBehaviour
     private Camera _camera;
     [SerializeField]
     private float _powerUpDuration;
+    [SerializeField]
+    private int _health;
+    [SerializeField]
+    private TMP_Text _Hp;
+    [SerializeField]
+    private Transform _respawnPoint;
 
     private Rigidbody _rigidbody;
     private Coroutine _powerUpCoroutine;
+    private bool _isPowerUpActive = false;
+
+    public void Hit() {
+        _health -= 1;
+        if (_health > 0) {
+            transform.position = _respawnPoint.position;
+        } else {
+            _health = 0;
+            Debug.Log("You Lose!");
+        }
+        UpdateUI();
+    }
 
     public void PickPowerUp() {
         if (_powerUpCoroutine != null) {
@@ -27,16 +46,19 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private IEnumerator StartPowerUp() {
+        _isPowerUpActive = true;
         if (OnPowerUpStart != null) {
             OnPowerUpStart();
         }
         yield return new WaitForSeconds(_powerUpDuration);
+        _isPowerUpActive = false;
         if (OnPowerUpStop != null) {
             OnPowerUpStop();
         }
     }
 
     private void Awake() {
+        UpdateUI();
         _rigidbody = GetComponent<Rigidbody>();
         HideLockCursor();
     }
@@ -62,8 +84,17 @@ public class PlayerMovement : MonoBehaviour
 
         // Move
         _rigidbody.velocity = movementDirection * _speed * Time.fixedDeltaTime;
+    }
 
-        // Debug.Log("Horizontal: " + horizontal);
-        // Debug.Log("Vertical: " + vertical);
+    private void OnCollisionEnter(Collision other) {
+        if (_isPowerUpActive) {
+            if (other.gameObject.CompareTag("Enemy")) {
+                other.gameObject.GetComponent<Enemy>().Dead();
+            }
+        }
+    }
+
+    private void UpdateUI() {
+        _Hp.text = "HP : " + _health;
     }
 }
