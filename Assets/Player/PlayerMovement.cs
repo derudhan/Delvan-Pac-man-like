@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -32,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
             transform.position = _respawnPoint.position;
         } else {
             _health = 0;
-            Debug.Log("You Lose!");
+            SceneManager.LoadScene("LoseScreen");
         }
         UpdateUI();
     }
